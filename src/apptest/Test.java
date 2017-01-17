@@ -15,6 +15,12 @@ public class Test extends TestCase  {
 		}
 	}
 	
+	
+	/*
+	 * test cases to validate the getHREF function
+	 * 
+	 */
+	
 	public void testHref(){
 		App app = new App();
 		ArrayList<String> testList = new ArrayList<String>();
@@ -30,12 +36,15 @@ public class Test extends TestCase  {
 						
 		ArrayList<String> result= app.getHref(testList);
 		for(int i=0;i<result.size();i++){
-			//System.out.println(expectedOutputList.get(i)+ " " + result.get(i));
-			
 			assertEquals(expectedOutputList.get(i), result.get(i));
 		}
 		
 	}
+
+	/*
+	 * test cases to validate the getTagList function
+	 * 
+	 */
 	
 	public void testTags(){
 		App app = new App();
@@ -52,13 +61,16 @@ public class Test extends TestCase  {
 						
 		ArrayList<String> result= app.getTagList(testList);
 		for(int i=0;i<result.size();i++){
-			//System.out.println(/*expectedOutputList.get(i)+ " " + */result.get(i));
-			
 			assertEquals(expectedOutputList.get(i), result.get(i));
-			
 		}
-		
 	}
+	
+	
+	/*
+	 * test cases to validate the getSequences function
+	 * 
+	 */
+	
 	
 	public void testSequences(){
 		App app = new App();
@@ -69,11 +81,7 @@ public class Test extends TestCase  {
 		expectedRes1.add("Mkyong It");
 		ArrayList<String> result1= app.getSequences(test1);
 		ArrayList<String> result2= app.getSequences(test2);
-		for(String s: result1)
-			System.out.println(s);
-		for(String s1: result2)
-			System.out.println(s1);
-		
+				
 		for(int i=0;i<result1.size();i++){
 			assertEquals(result1.get(i), expectedRes1.get(i));
 		}

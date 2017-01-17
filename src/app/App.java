@@ -17,37 +17,51 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class App {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 				
 		URL url;
 		String inputUrl="";
-		PrintWriter writer = null;
+		BufferedWriter writer = null;
 		ArrayList<String> tags= new ArrayList<String>();
 		ArrayList<String> tagList= new ArrayList<String>();
 		ArrayList<String> hrefList=  new ArrayList<String>();
 		ArrayList<String> sequenceTextResult =  new ArrayList<String>();
 		String outputFile ="";
-		if(args.length!=3){
+		/*
+		 * Checks if the command line arguments comply with the description.
+		 * 
+		 * 
+		 */
+		if(args.length!=2){
 			System.out.println("Insufficient Arguments! ");
+			
 		}
 		
-		else if(args[1].split(":")[0]==""){
-			inputUrl= "http://"+args[1];
+		else if(!args[0].contains("://")){
+			System.out.println("innn");
+			inputUrl= "http://"+args[0];
 		}
 		
-		else if(args[1].split(":")[0].equals("http")|| args[1].split(":")[0].equals("http")){
-			inputUrl= args[1];
+		else if(args[0].split(":")[0].equals("http")|| args[0].split(":")[0].equals("http")){
+			inputUrl= args[0];
+			System.out.println(" sss");
 		}
 		
-		else if(!args[1].split(":")[0].equals("http")||(!(args[1].split(":")[0].equals("http")))){
-			System.out.println(args[1].split(":")[0]);
+		else if(inputUrl==""){
+			System.out.println(args[0].split(":")[0]);
 			System.out.println("Error Input File! Input URL should be HTTP or HTTPS ");
 		}
 		
 		try {
-			outputFile=args[2];
-			
+			outputFile=args[1];
+			System.out.println(inputUrl);
 			url = new URL(inputUrl);
+			/*
+			 * Reading the HTML content from the given URL as a single String
+			 * 
+			 * 
+			 * 
+			 */
 			URLConnection conn = url.openConnection();
 			BufferedReader br = new BufferedReader(
                                new InputStreamReader(conn.getInputStream()));
@@ -63,25 +77,43 @@ public class App {
 			hrefList= app.getHref(tags);
 			sequenceTextResult = app.getSequences(htmlString);
 			
-			
-			
 			br.close();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-			
+			/*
+			 * 
+			 * writing it to the output file output.txt using BufferedWriter
+			 * 
+			 * 
+			 * 
+			 */
 		try{
-		    writer = new PrintWriter(outputFile, "UTF-8");
-		    for(String s: tagList)
-				writer.print(s);
-		    writer.println();
-		    for(String s: hrefList)
-		    	writer.println(s);
-			for(String str: sequenceTextResult)
-				writer.println(str);
+		    writer = new BufferedWriter(new FileWriter(outputFile));
 		    
+		    writer.write("[LINKS]");
+		    writer.newLine();writer.newLine();
+		    for(String s: hrefList){
+		    	writer.write(s);
+		    	writer.newLine();
+		    }
+		    writer.newLine();
+		    writer.write("[HTML]");
+		    writer.newLine();writer.newLine();
+		    
+		    for(String s: tagList)
+				writer.write(s);
+		    writer.newLine();writer.newLine();
+		    
+		    writer.write("[SEQUENCE]");
+		    writer.newLine();
+		    writer.newLine();
+			for(String str: sequenceTextResult){
+				writer.write(str);
+				writer.newLine();
+			}
 		} 
 		catch (IOException e) {
 		   e.printStackTrace();
@@ -91,6 +123,14 @@ public class App {
 		}
 
 	}
+	/*
+	 * 
+	 * getSequences function takes in HTML content and returns all  
+	 * two or more words that have the first letter in each word is capitalized
+	 * sequence of characters of length greater than two separated by whitespace 
+	 * 
+	 * 
+	 */
 
 	public ArrayList<String> getSequences(String inputLine) {
 		ArrayList<String> sequenceTextResult = new ArrayList<String>();
@@ -125,7 +165,11 @@ public class App {
 		return sequenceTextResult;
 		
 	}
-		
+		/*
+		 * function all HTML tags from the input HTML content
+		 * which is used by both getHTMLTags and getHref fucntions
+		 * 
+		 */
 	
 
 	public ArrayList<String> getHTMLTags(String inputLine) {
@@ -143,7 +187,11 @@ public class App {
 			return tags;
 		}
 		
-		
+		/*
+		 * 
+		 * function that returns all HTML tags
+		 * 
+		 */
 	public ArrayList<String> getTagList(ArrayList<String> tags){
 		ArrayList<String> tagList = new ArrayList<String>();
 		
@@ -160,6 +208,10 @@ public class App {
 		}
 		return tagList;
 	}
+	/*
+	 * 
+	 * return all links in the HTML page
+	 */
 
 	public ArrayList<String> getHref(ArrayList<String> tags) {
 		ArrayList<String> links = new ArrayList<String>();
